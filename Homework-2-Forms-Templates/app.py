@@ -46,9 +46,9 @@ def favorites():
         What is your favorite Color, Animal and City?<br/>
         <label>Color</label><br>
         <input type="text" name="color"><br/>
-        <label>Animal</label><br>
+        <label>favorite animal</label><br>
         <input type="text" name="animal"><br/>
-        <label>City</label><br>
+        <label>favorite city</label><br>
         <input type="text" name="city"><br/>
         <input type="submit" value="Submit!">
     </form>
@@ -171,7 +171,7 @@ def compliments_results():
     if (wants_compliments == "yes"):
         random_compliments = random.sample(list_of_compliments,k=num_compliments)
     elif (wants_compliments == "no"):
-        pass
+        return render_template('compliments_results.html', **context)
     context = {
         # TODO: Enter your context variables here.
         'name': name,
