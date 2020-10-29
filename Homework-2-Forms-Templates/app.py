@@ -29,9 +29,14 @@ def choose_froyo():
 
 @app.route('/froyo_results')
 def show_froyo_results():
-    users_froyo_flavor = request.args.get('flavor')
-    users_foryo_toppings = request.args.get('toppings')
-    return f'You ordered {users_froyo_flavor} flavored Fro-Yo with toppings {users_foryo_toppings}!'
+    context = {
+        'users_froyo_flavor': request.args.get('flavor'),
+        'users_froyo_toppings': request.args.get('toppings')
+    }
+    # users_froyo_flavor = request.args.get('flavor')
+    # users_foryo_toppings = request.args.get('toppings')
+    return render_template("froyo_results.html", **context)
+    # return f'You ordered {users_froyo_flavor} flavored Fro-Yo with toppings {users_foryo_toppings}!'
 
 @app.route('/favorites')
 def favorites():
@@ -93,24 +98,33 @@ def calculator():
 
 @app.route('/calculator_results')
 def calculator_results():
+
     users_first_num = int(request.args.get('operand1'))
     users_second_num = int(request.args.get('operand2'))
     users_operator = request.args.get('operation')
     answer = 0
+    context = {
+        'users_first_num': users_first_num,
+        'users_second_num': users_second_num,
+        'users_operator': users_operator,
+        'answer': answer
+    }
+    # users_first_num = int(request.args.get('operand1'))
+    # users_second_num = int(request.args.get('operand2'))
+    # users_operator = request.args.get('operation')
+    # answer = 0
     print(users_first_num)
     if (users_operator == "add"):
-        answer = users_first_num + users_second_num
-        return f"You chose to add {users_first_num} and {users_second_num}. Your result is: {answer}"
+        context['answer'] = users_first_num + users_second_num
     elif (users_operator == "subtract"):
-        answer = users_first_num - users_second_num
-        return f"You chose to subtract {users_first_num} and {users_second_num}. Your result is: {answer}"
+        context['answer'] = users_first_num - users_second_num
     elif (users_operator == "divide"):
-        answer = users_first_num / users_second_num
-        return f"You chose to divide {users_first_num} and {users_second_num}. Your result is: {answer}"
+        context['answer'] = users_first_num / users_second_num
     elif (users_operator == "multiply"):
-        answer = users_first_num * users_second_num
-        return f"You chose to multiply {users_first_num} and {users_second_num}. Your result is: {answer}"
+        context['answer'] = users_first_num * users_second_num
     pass
+    return render_template("calculator_results.html", **context)
+
 
 
 # List of compliments to be used in the `compliments_results` route (feel free 
@@ -139,7 +153,8 @@ list_of_compliments = [
     'super',
     'upbeat',
     'wondrous',
-    'zoetic'
+    'zoetic', 
+    'cottenheadedninnymuggins'
 ]
 
 @app.route('/compliments')
@@ -150,8 +165,18 @@ def compliments():
 @app.route('/compliments_results')
 def compliments_results():
     """Show the user some compliments."""
+    name = request.args.get('users_name')
+    wants_compliments = request.args.get("wants_compliments")
+    num_compliments = int(request.args.get("num_compliments"))
+    if (wants_compliments == "yes"):
+        random_compliments = random.sample(list_of_compliments,k=num_compliments)
+    elif (wants_compliments == "no"):
+        pass
     context = {
         # TODO: Enter your context variables here.
+        'name': name,
+        'compliments_list': random_compliments,
+        'wants_compliments': wants_compliments
     }
 
     return render_template('compliments_results.html', **context)

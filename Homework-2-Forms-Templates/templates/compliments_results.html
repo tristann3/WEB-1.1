@@ -5,7 +5,14 @@
     </head>
     <body>
         <!-- Your HTML code goes here! -->
-
+        Hello {{name}}!
+        {% if wants_compliments == 'yes' %}
+        <ul>
+            {% for compliment in compliments_list %}
+            <li> {{ compliment }} </li>
+            {% endfor %}
+        </ul>
+        {% endif %}
         
 
         
