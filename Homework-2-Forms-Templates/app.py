@@ -170,8 +170,9 @@ def compliments_results():
     num_compliments = int(request.args.get("num_compliments"))
     if (wants_compliments == "yes"):
         random_compliments = random.sample(list_of_compliments,k=num_compliments)
-    elif (wants_compliments == "no"):
-        return render_template('compliments_results.html', **context)
+    else:
+        random_compliments = None
+    
     context = {
         # TODO: Enter your context variables here.
         'name': name,
