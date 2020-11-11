@@ -52,7 +52,9 @@ def compliments():
 def compliments_results():
     """Show the user some compliments."""
     context = {
-        # TODO: Enter your context variables here.
+        "users_name": request.args.get("users_name"),
+        "wants_compliments": request.args.get("wants_compliments"),
+        "num_compliments": request.args.get("num_compliments")
     }
 
     return render_template('compliments_results.html', **context)
@@ -106,13 +108,12 @@ def save_image(image, filter_type):
     image.filename = new_file_name
 
     # Construct full file path
-    file_path = os.path.join(app.root_path, 'static/images', file_name)
+    file_path = os.path.join(app.root_path, 'static/images', new_file_name)
     
     # Save the image
     image.save(file_path)
 
     return file_path
-
 
 def apply_filter(file_path, filter_name):
     """Apply a Pillow filter to a saved image."""
@@ -140,7 +141,7 @@ def image_filter():
 
         # TODO: Call `apply_filter()` on the file path & filter type
 
-        image_url = f'/static/images/{filter_type}-{image.filename}'
+        image_url = f'/static/images/{image.filename}'
 
         context = {
             # TODO: Add context variables here for:
