@@ -145,21 +145,26 @@ def image_filter():
         
         # TODO: Get the user's chosen filter type (whichever one they chose in the form) and save
         # as a variable
-        filter_type = ''
-        
+        filter_type = request.form.get("filter_type")
+        filter = filter_types_dict.get(filter_type)
+        print(filter)
         # Get the image file submitted by the user
         image = request.files.get('users_image')
 
         # TODO: call `save_image()` on the image & the user's chosen filter type, save the returned
         # value as the new file path
+        file_path = save_image(image, filter_type)
 
         # TODO: Call `apply_filter()` on the file path & filter type
+        apply_filter(file_path, filter_type)
 
         image_url = f'/static/images/{image.filename}'
 
         context = {
             # TODO: Add context variables here for:
+            "filter_types": filter_types,
             # - The full list of filter types
+            "image_url": image_url
             # - The image URL
         }
 
