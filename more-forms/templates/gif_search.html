@@ -34,6 +34,11 @@ Gif Search
     <p>
         Here are your GIFs:
     </p>
+    {% for gif in gifs %}
+    <p>
+        <img src="{{ gif['media'][0]['gif']['url'] }}">
+    </p>
+    {% endfor %}
     <!-- TODO: Use a for loop to show each GIF separately in an img tag (and place each one in a 
         separate p tag to show on separate lines). You can get the GIF's image URL by using: 
         gif['media'][0]['gif']['url'] -->
