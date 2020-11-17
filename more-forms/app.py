@@ -5,6 +5,12 @@ import json
 import os
 import random
 import requests
+from dotenv import load_dotenv
+load_dotenv()
+
+secret_key = os.getenv('SECRET_KEY')
+print(secret_key) # 'ilikebananas'
+
 
 app = Flask(__name__)
 
