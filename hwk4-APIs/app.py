@@ -114,13 +114,21 @@ def get_min_temp(results):
     """Returns the minimum temp for the given hourly weather objects."""
     # TODO: Fill in this function to return the minimum temperature from the
     # hourly weather data.
-    return results['main']['temp_min']
+    hourly_temps = []
+    for i in range(24):
+        hourly_temps.append(results[i]['temp'])
+    
+    return min(hourly_temps)
 
 def get_max_temp(results):
     """Returns the maximum temp for the given hourly weather objects."""
     # TODO: Fill in this function to return the maximum temperature from the
     # hourly weather data.
-    return results['main']['temp_max']
+    hourly_temps = []
+    for i in range(24):
+        hourly_temps.append(results[i]['temp'])
+
+    return max(hourly_temps)
 
 def get_lat_lon(city_name):
     geolocator = Nominatim(user_agent='Weather Application')
@@ -135,24 +143,28 @@ def historical_results():
     """Displays historical weather forecast for a given day."""
     # TODO: Use 'request.args' to retrieve the city & units from the query
     # parameters.
-    city = ''
-    date = '2020-08-26'
-    units = ''
+    city = request.args.get('city')
+    date = request.args.get('date')
+    units = request.args.get('units')
     date_obj = datetime.strptime(date, '%Y-%m-%d')
     date_in_seconds = date_obj.strftime('%s')
 
     latitude, longitude = get_lat_lon(city)
 
     url = 'http://api.openweathermap.org/data/2.5/onecall/timemachine'
+    print(latitude)
+    print(longitude)
+    print(date_in_seconds)
     params = {
         # TODO: Enter query parameters here for the 'appid' (your api key),
         # latitude, longitude, units, & date (in seconds).
         # See the documentation here (scroll down to "Historical weather data"):
         # https://openweathermap.org/api/one-call-api
-        'appid': API_KEY, 
-        'q': city,
-        'units': units
-        
+        'lat': latitude, 
+        'lon': longitude,
+        'dt': date_in_seconds, 
+        'appid': API_KEY,
+        'units': units,        
     }
 
     result_json = requests.get(url, params=params).json()
@@ -166,17 +178,19 @@ def historical_results():
     # TODO: Replace the empty variables below with their appropriate values.
     # You'll need to retrieve these from the 'result_current' object above.
     context = {
-        'city': '',
+        'city': request.args.get('city'),
         'date': date_obj,
         'lat': latitude,
         'lon': longitude,
-        'units': '',
-        'units_letter': '', # should be 'C', 'F', or 'K'
-        'description': '',
-        'temp': '',
+        'units': units,
+        'units_letter': get_letter_for_units(units), # should be 'C', 'F', or 'K'
+        'description': result_current['weather'][0]['description'],
+        'temp': result_current['temp'],
         'min_temp': get_min_temp(result_hourly),
         'max_temp': get_max_temp(result_hourly)
     }
+    print(context)
+    
 
     return render_template('historical_results.html', **context)
 
