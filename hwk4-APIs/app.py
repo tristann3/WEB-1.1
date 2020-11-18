@@ -63,11 +63,16 @@ def results():
     """Displays results for current weather conditions."""
     # TODO: Use 'request.args' to retrieve the city & units from the query
     # parameters.
-    city = ''
-    units = ''
+    city = request.args.get('city')
+    unitsInput = request.args.get('units')
+    units = get_letter_for_units(unitsInput) #uses the helper function to get the desired units letter
+    
 
-    url = 'http://api.openweathermap.org/data/2.5/weather'
+    url = 'https://api.openweathermap.org/data/2.5/weather'
     params = {
+        'appid': API_KEY, 
+        'q': city,
+        'units': units
         # TODO: Enter query parameters here for the 'appid' (your api key),
         # the city, and the units (metric or imperial).
         # See the documentation here: https://openweathermap.org/current
@@ -77,7 +82,7 @@ def results():
     result_json = requests.get(url, params=params).json()
 
     # Uncomment the line below to see the results of the API call!
-    # pp.pprint(result_json)
+    pp.pprint(result_json)
 
     # TODO: Replace the empty variables below with their appropriate values.
     # You'll need to retrieve these from the result_json object above.
@@ -85,17 +90,24 @@ def results():
     # For the sunrise & sunset variables, I would recommend to turn them into
     # datetime objects. You can do so using the `datetime.fromtimestamp()` 
     # function.
+    sunrise = datetime.fromtimestamp(result_json['sys']['sunrise'])
+    sunrise = sunrise.strftime("%H:%M:%p")
+    sunset = datetime.fromtimestamp(result_json['sys']['sunset'])
+    sunset = sunset.strftime("%H:%M:%p")
+    print(sunrise)
+    print(sunset)
     context = {
         'date': datetime.now(),
-        'city': '',
-        'description': '',
-        'temp': '',
-        'humidity': '',
-        'wind_speed': '',
-        'sunrise': '',
-        'sunset': '',
+        'city': result_json['name'],
+        'description': result_json['weather'][0]['description'],
+        'temp': result_json['main']['temp'],
+        'humidity': result_json['main']['humidity'],
+        'wind_speed': result_json['wind']['speed'],
+        'sunrise': sunrise,
+        'sunset': sunset,
         'units_letter': get_letter_for_units(units)
     }
+    pp.pprint(context)
 
     return render_template('results.html', **context)
 
@@ -103,13 +115,13 @@ def get_min_temp(results):
     """Returns the minimum temp for the given hourly weather objects."""
     # TODO: Fill in this function to return the minimum temperature from the
     # hourly weather data.
-    pass
+    return results['main']['temp_min']
 
 def get_max_temp(results):
     """Returns the maximum temp for the given hourly weather objects."""
     # TODO: Fill in this function to return the maximum temperature from the
     # hourly weather data.
-    pass
+    return results['main']['temp_max']
 
 def get_lat_lon(city_name):
     geolocator = Nominatim(user_agent='Weather Application')
