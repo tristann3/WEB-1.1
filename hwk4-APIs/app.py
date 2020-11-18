@@ -24,6 +24,7 @@ app = Flask(__name__)
 # Get the API key from the '.env' file
 load_dotenv()
 API_KEY = os.getenv('API_KEY')
+print(API_KEY)
 
 
 # Settings for image endpoint
