@@ -92,10 +92,9 @@ def results():
     # function.
     sunrise = datetime.fromtimestamp(result_json['sys']['sunrise'])
     sunrise = sunrise.strftime("%H:%M:%p")
+    # uses the datetime python library to convert a timestamp to hours minutes and seconds
     sunset = datetime.fromtimestamp(result_json['sys']['sunset'])
     sunset = sunset.strftime("%H:%M:%p")
-    print(sunrise)
-    print(sunset)
     context = {
         'date': datetime.now(),
         'city': result_json['name'],
@@ -150,13 +149,16 @@ def historical_results():
         # latitude, longitude, units, & date (in seconds).
         # See the documentation here (scroll down to "Historical weather data"):
         # https://openweathermap.org/api/one-call-api
+        'appid': API_KEY, 
+        'q': city,
+        'units': units
         
     }
 
     result_json = requests.get(url, params=params).json()
 
     # Uncomment the line below to see the results of the API call!
-    # pp.pprint(result_json)
+    pp.pprint(result_json)
 
     result_current = result_json['current']
     result_hourly = result_json['hourly']
