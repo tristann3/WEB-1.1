@@ -58,11 +58,13 @@ def get_letter_for_units(units):
     """Returns a shorthand letter for the given units."""
     return 'F' if units == 'imperial' else 'C' if units == 'metric' else 'K'
 
+def get_date_formatted(date):
+    return date.strftime("%A, %B %-d, %Y")
+
 @app.route('/results')
 def results():
     """Displays results for current weather conditions."""
-    # TODO: Use 'request.args' to retrieve the city & units from the query
-    # parameters.
+
     city = request.args.get('city')
     unitsInput = request.args.get('units')
     units = get_letter_for_units(unitsInput) #uses the helper function to get the desired units letter
@@ -73,30 +75,21 @@ def results():
         'appid': API_KEY, 
         'q': city,
         'units': units
-        # TODO: Enter query parameters here for the 'appid' (your api key),
-        # the city, and the units (metric or imperial).
-        # See the documentation here: https://openweathermap.org/current
-
     }
 
     result_json = requests.get(url, params=params).json()
 
-    # Uncomment the line below to see the results of the API call!
-    pp.pprint(result_json)
-
-    # TODO: Replace the empty variables below with their appropriate values.
-    # You'll need to retrieve these from the result_json object above.
-
-    # For the sunrise & sunset variables, I would recommend to turn them into
-    # datetime objects. You can do so using the `datetime.fromtimestamp()` 
-    # function.
+# uses the datetime python library to convert a timestamp to hours minutes and seconds for sunrise and sunset
     sunrise = datetime.fromtimestamp(result_json['sys']['sunrise'])
     sunrise = sunrise.strftime("%H:%M:%p")
-    # uses the datetime python library to convert a timestamp to hours minutes and seconds
+    
     sunset = datetime.fromtimestamp(result_json['sys']['sunset'])
     sunset = sunset.strftime("%H:%M:%p")
+
+    date = get_date_formatted(datetime.now())
+
     context = {
-        'date': datetime.now(),
+        'date': date,
         'city': result_json['name'],
         'description': result_json['weather'][0]['description'],
         'temp': result_json['main']['temp'],
