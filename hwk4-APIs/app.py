@@ -56,9 +56,10 @@ def home():
 
 def get_letter_for_units(units):
     """Returns a shorthand letter for the given units."""
-    return 'F' if units == 'imperial' else 'C' if units == 'metric' else 'K'
+    return '°F' if units == 'imperial' else '°C' if units == 'metric' else 'K'
 
 def get_date_formatted(date):
+    '''Returns a datetime object in a neater format'''
     return date.strftime("%A, %B %-d, %Y")
 
 @app.route('/results')
@@ -67,6 +68,7 @@ def results():
 
     city = request.args.get('city')
     unitsInput = request.args.get('units')
+    print(unitsInput)
     units = get_letter_for_units(unitsInput) #uses the helper function to get the desired units letter
     
 
@@ -86,7 +88,7 @@ def results():
     sunset = datetime.fromtimestamp(result_json['sys']['sunset'])
     sunset = sunset.strftime("%H:%M:%p")
 
-    date = get_date_formatted(datetime.now())
+    date = get_date_formatted(datetime.now()) #helper function
 
     context = {
         'date': date,
@@ -99,14 +101,10 @@ def results():
         'sunset': sunset,
         'units_letter': get_letter_for_units(units)
     }
-    pp.pprint(context)
-
     return render_template('results.html', **context)
 
 def get_min_temp(results):
     """Returns the minimum temp for the given hourly weather objects."""
-    # TODO: Fill in this function to return the minimum temperature from the
-    # hourly weather data.
     hourly_temps = []
     for i in range(24):
         hourly_temps.append(results[i]['temp'])
@@ -115,8 +113,6 @@ def get_min_temp(results):
 
 def get_max_temp(results):
     """Returns the maximum temp for the given hourly weather objects."""
-    # TODO: Fill in this function to return the maximum temperature from the
-    # hourly weather data.
     hourly_temps = []
     for i in range(24):
         hourly_temps.append(results[i]['temp'])
@@ -134,25 +130,18 @@ def get_lat_lon(city_name):
 @app.route('/historical_results')
 def historical_results():
     """Displays historical weather forecast for a given day."""
-    # TODO: Use 'request.args' to retrieve the city & units from the query
-    # parameters.
+
     city = request.args.get('city')
     date = request.args.get('date')
     units = request.args.get('units')
+
     date_obj = datetime.strptime(date, '%Y-%m-%d')
     date_in_seconds = date_obj.strftime('%s')
 
     latitude, longitude = get_lat_lon(city)
 
     url = 'http://api.openweathermap.org/data/2.5/onecall/timemachine'
-    print(latitude)
-    print(longitude)
-    print(date_in_seconds)
     params = {
-        # TODO: Enter query parameters here for the 'appid' (your api key),
-        # latitude, longitude, units, & date (in seconds).
-        # See the documentation here (scroll down to "Historical weather data"):
-        # https://openweathermap.org/api/one-call-api
         'lat': latitude, 
         'lon': longitude,
         'dt': date_in_seconds, 
@@ -162,27 +151,21 @@ def historical_results():
 
     result_json = requests.get(url, params=params).json()
 
-    # Uncomment the line below to see the results of the API call!
-    pp.pprint(result_json)
-
     result_current = result_json['current']
     result_hourly = result_json['hourly']
 
-    # TODO: Replace the empty variables below with their appropriate values.
-    # You'll need to retrieve these from the 'result_current' object above.
     context = {
         'city': request.args.get('city'),
         'date': date_obj,
         'lat': latitude,
         'lon': longitude,
         'units': units,
-        'units_letter': get_letter_for_units(units), # should be 'C', 'F', or 'K'
+        'units_letter': get_letter_for_units(units),
         'description': result_current['weather'][0]['description'],
         'temp': result_current['temp'],
         'min_temp': get_min_temp(result_hourly),
         'max_temp': get_max_temp(result_hourly)
     }
-    print(context)
     
 
     return render_template('historical_results.html', **context)
