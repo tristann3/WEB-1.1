@@ -51,8 +51,6 @@ def create():
         }
         _id = mongo.db.plants_collection.insert_one(new_plant) #returns a plant ID
 
-        print(_id)
-
         return redirect(url_for('detail', plant_id = _id))
 
     else:
