@@ -18,13 +18,10 @@ mongo = PyMongo(app)
 @app.route('/')
 def plants_list():
     """Display the plants list page."""
-    plants_data = mongo.db.plants.find({})
-    plants = []
-    for plant in plants_data:
-        plants.append(plant)
+    plants_data = list(mongo.db.plants.find({}))
     
     context = {
-    'plants': plants
+    'plants': plants_data
 }
     return render_template('plants_list.html', **context)
 
