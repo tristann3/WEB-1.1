@@ -40,7 +40,8 @@ def create():
             'photo_url': request.form.get('photo'),
             'date_planted': request.form.get('date_planted')
         }
-        plant_id = mongo.db.plants.insert_one(new_plant)
+        inserted_plant = mongo.db.plants.insert_one(new_plant) # this returns a document CONTAINING "ID"
+        plant_id = inserted_plant.inserted_id # this now retrieves the ID from the inserted_plant variable
 
         return redirect(url_for('detail', plant_id=plant_id))
 
